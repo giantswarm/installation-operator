@@ -12,22 +12,22 @@ import (
 	"github.com/giantswarm/installation-operator/service/controller/resource/test"
 )
 
-type todoResourceSetConfig struct {
+type installationResourceSetConfig struct {
 	K8sClient k8sclient.Interface
 	Logger    micrologger.Logger
 }
 
-func newTODOResourceSet(config todoResourceSetConfig) (*controller.ResourceSet, error) {
+func newInstallationResourceSet(config installationResourceSetConfig) (*controller.ResourceSet, error) {
 	var err error
 
 	var testResource resource.Interface
 	{
-		c := test.Config{
+		c := installation.Config{
 			K8sClient: config.K8sClient,
 			Logger:    config.Logger,
 		}
 
-		testResource, err = test.New(c)
+		testResource, err = installation.New(c)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}

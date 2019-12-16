@@ -13,19 +13,19 @@ import (
 	"github.com/giantswarm/installation-operator/pkg/project"
 )
 
-type TODOConfig struct {
+type InstallationConfig struct {
 	K8sClient k8sclient.Interface
 	Logger    micrologger.Logger
 }
 
-type TODO struct {
+type Installation struct {
 	*controller.Controller
 }
 
-func NewTODO(config TODOConfig) (*TODO, error) {
+func NewInstallation(config InstallationConfig) (*Installation, error) {
 	var err error
 
-	resourceSets, err := newTODOResourceSets(config)
+	resourceSets, err := newInstallationResourceSets(config)
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
@@ -40,10 +40,7 @@ func NewTODO(config TODOConfig) (*TODO, error) {
 			NewRuntimeObjectFunc: func() runtime.Object {
 				return new(corev1.Pod)
 			},
-
-			// Name is used to compute finalizer names. This here results in something
-			// like operatorkit.giantswarm.io/installation-operator-todo-controller.
-			Name: project.Name() + "-todo-controller",
+			Name: project.Name() + "-installation-controller",
 		}
 
 		operatorkitController, err = controller.New(c)
@@ -52,24 +49,24 @@ func NewTODO(config TODOConfig) (*TODO, error) {
 		}
 	}
 
-	c := &TODO{
+	c := &Installation{
 		Controller: operatorkitController,
 	}
 
 	return c, nil
 }
 
-func newTODOResourceSets(config TODOConfig) ([]*controller.ResourceSet, error) {
+func newInstallationResourceSets(config InstallationConfig) ([]*controller.ResourceSet, error) {
 	var err error
 
 	var resourceSet *controller.ResourceSet
 	{
-		c := todoResourceSetConfig{
+		c := installationResourceSetConfig{
 			K8sClient: config.K8sClient,
 			Logger:    config.Logger,
 		}
 
-		resourceSet, err = newTODOResourceSet(c)
+		resourceSet, err = newInstallationResourceSet(c)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}

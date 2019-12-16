@@ -23,8 +23,6 @@ type Set struct {
 func NewSet(config SetConfig) (*Set, error) {
 	var err error
 
-	// TODO: Wiring for your collectors goes here! Check aws-operator as reference!
-
 	var collectorSet *collector.Set
 	{
 		c := collector.SetConfig{
