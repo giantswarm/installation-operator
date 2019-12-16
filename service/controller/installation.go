@@ -1,16 +1,16 @@
 package controller
 
 import (
-	// If your operator watches a CRD import it here.
-	// "github.com/giantswarm/apiextensions/pkg/apis/application/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+
+	"github.com/giantswarm/apiextensions/pkg/apis/core/v1alpha1"
 	"github.com/giantswarm/k8sclient"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/operatorkit/controller"
-	corev1 "k8s.io/api/core/v1"
-	"k8s.io/apimachinery/pkg/runtime"
 
-	"github.com/giantswarm/template-operator/pkg/project"
+	"github.com/giantswarm/installation-operator/pkg/project"
 )
 
 type TODOConfig struct {
@@ -33,8 +33,7 @@ func NewTODO(config TODOConfig) (*TODO, error) {
 	var operatorkitController *controller.Controller
 	{
 		c := controller.Config{
-			// If your operator watches a CRD add it here.
-			// CRD:       v1alpha1.NewAppCRD(),
+			CRD:          v1alpha1.NewInstallationCRD(),
 			K8sClient:    config.K8sClient,
 			Logger:       config.Logger,
 			ResourceSets: resourceSets,
@@ -43,7 +42,7 @@ func NewTODO(config TODOConfig) (*TODO, error) {
 			},
 
 			// Name is used to compute finalizer names. This here results in something
-			// like operatorkit.giantswarm.io/template-operator-todo-controller.
+			// like operatorkit.giantswarm.io/installation-operator-todo-controller.
 			Name: project.Name() + "-todo-controller",
 		}
 
