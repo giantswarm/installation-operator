@@ -36,6 +36,8 @@ type FlannelConfigExpansion interface{}
 
 type IngressConfigExpansion interface{}
 
+type InstallationExpansion interface{}
+
 type KVMClusterConfigExpansion interface{}
 
 type NodeConfigExpansion interface{}

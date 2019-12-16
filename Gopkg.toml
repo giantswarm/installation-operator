@@ -25,6 +25,10 @@
   branch = "master"
   name = "github.com/giantswarm/exporterkit"
 
+[[override]]
+  branch = "add-installation-type"
+  name = "github.com/giantswarm/apiextensions"
+
 [[constraint]]
   branch = "master"
   name = "github.com/giantswarm/microendpoint"

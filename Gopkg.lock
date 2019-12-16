@@ -58,8 +58,8 @@
   revision = "25d852aebe32c875e9c044af3eef9c7dc6bc777f"
 
 [[projects]]
-  branch = "master"
-  digest = "1:f2448b52a81ba466f07eac7a20b6e81cc69cba3048ec0c2e7865f0a1f50a56bc"
+  branch = "add-installation-type"
+  digest = "1:5eb0a5f0e7960e8ba6dc403dc482a6f992db939fd1cf5924c4078ab9dbbc365f"
   name = "github.com/giantswarm/apiextensions"
   packages = [
     "pkg/apis/application/v1alpha1",
@@ -78,7 +78,7 @@
     "pkg/clientset/versioned/typed/release/v1alpha1",
   ]
   pruneopts = "UT"
-  revision = "71155aa0f5b7e5e88f31764039e27752c6aee580"
+  revision = "3206cb7f89c6e10144e15a07c6432e17a7ce7bbd"
 
 [[projects]]
   branch = "master"
@@ -993,6 +993,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/giantswarm/apiextensions/pkg/apis/core/v1alpha1",
     "github.com/giantswarm/exporterkit/collector",
     "github.com/giantswarm/k8sclient",
     "github.com/giantswarm/k8sclient/k8srestconfig",
