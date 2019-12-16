@@ -1,7 +1,6 @@
 package controller
 
 import (
-	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 
 	"github.com/giantswarm/apiextensions/pkg/apis/core/v1alpha1"
@@ -38,7 +37,7 @@ func NewInstallation(config InstallationConfig) (*Installation, error) {
 			Logger:       config.Logger,
 			ResourceSets: resourceSets,
 			NewRuntimeObjectFunc: func() runtime.Object {
-				return new(corev1.Pod)
+				return new(v1alpha1.Installation)
 			},
 			Name: project.Name() + "-installation-controller",
 		}
@@ -59,21 +58,21 @@ func NewInstallation(config InstallationConfig) (*Installation, error) {
 func newInstallationResourceSets(config InstallationConfig) ([]*controller.ResourceSet, error) {
 	var err error
 
-	var resourceSet *controller.ResourceSet
+	var installationResourceSet *controller.ResourceSet
 	{
 		c := installationResourceSetConfig{
 			K8sClient: config.K8sClient,
 			Logger:    config.Logger,
 		}
 
-		resourceSet, err = newInstallationResourceSet(c)
+		installationResourceSet, err = newInstallationResourceSet(c)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
 	}
 
 	resourceSets := []*controller.ResourceSet{
-		resourceSet,
+		installationResourceSet,
 	}
 
 	return resourceSets, nil

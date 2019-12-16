@@ -23,10 +23,17 @@ type Set struct {
 func NewSet(config SetConfig) (*Set, error) {
 	var err error
 
+	installation, err := NewInstallation(InstallationConfig{})
+	if err != nil {
+		return nil, microerror.Mask(err)
+	}
+
 	var collectorSet *collector.Set
 	{
 		c := collector.SetConfig{
-			Collectors: []collector.Interface{},
+			Collectors: []collector.Interface{
+				installation,
+			},
 			Logger:     config.Logger,
 		}
 

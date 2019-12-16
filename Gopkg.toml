@@ -19,7 +19,9 @@
 #  name = "github.com/x/y"
 #  version = "2.4.0"
 
-
+[[constraint]]
+  branch = "master"
+  name = "github.com/giantswarm/kubelock"
 
 [[constraint]]
   branch = "master"
@@ -70,10 +72,12 @@
   version = "v1.16.3"
 
 [[override]]
-source = "gopkg.in/fsnotify/fsnotify.v1"
-name = "gopkg.in/fsnotify.v1"
+  source = "gopkg.in/fsnotify/fsnotify.v1"
+  name = "gopkg.in/fsnotify.v1"
 
-
+[[constraint]]
+  branch = "master"
+  name = "github.com/rancher/terraform-controller"
 
 
 [prune]

@@ -31,13 +31,9 @@ func NewInstallationCRD() *apiextensionsv1beta1.CustomResourceDefinition {
 			Name: "installations.core.giantswarm.io",
 		},
 		Spec: apiextensionsv1beta1.CustomResourceDefinitionSpec{
-			Group: "core.giantswarm.io",
-			Scope: "Namespaced",
-			Versions: []apiextensionsv1beta1.CustomResourceDefinitionVersion{
-				{
-					Name: "v1alpha1",
-				},
-			},
+			Group:   "core.giantswarm.io",
+			Scope:   "Namespaced",
+			Version: "v1alpha1",
 			Names: apiextensionsv1beta1.CustomResourceDefinitionNames{
 				Kind:     "Installation",
 				Plural:   "installations",

@@ -6,10 +6,14 @@ import (
 	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/operatorkit/controller"
 	"github.com/giantswarm/operatorkit/resource"
+	"github.com/giantswarm/operatorkit/resource/crud"
 	"github.com/giantswarm/operatorkit/resource/wrapper/metricsresource"
 	"github.com/giantswarm/operatorkit/resource/wrapper/retryresource"
 
-	"github.com/giantswarm/installation-operator/service/controller/resource/installation"
+	"github.com/giantswarm/installation-operator/service/controller/key"
+	"github.com/giantswarm/installation-operator/service/controller/resource/awsclient"
+	"github.com/giantswarm/installation-operator/service/controller/resource/dynamodb"
+	"github.com/giantswarm/installation-operator/service/controller/resource/s3bucket"
 )
 
 type installationResourceSetConfig struct {
@@ -20,21 +24,57 @@ type installationResourceSetConfig struct {
 func newInstallationResourceSet(config installationResourceSetConfig) (*controller.ResourceSet, error) {
 	var err error
 
-	var testResource resource.Interface
+	var awsClientResource resource.Interface
 	{
-		c := installation.Config{
-			K8sClient: config.K8sClient,
-			Logger:    config.Logger,
+		c := awsclient.Config{
+			Logger:        config.Logger,
+			ToInstallationFunc: key.ToInstallation,
 		}
 
-		testResource, err = installation.New(c)
+		awsClientResource, err = awsclient.New(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
+
+	var s3BucketResource resource.Interface
+	{
+		c := s3bucket.Config{
+			Logger: config.Logger,
+		}
+
+		ops, err := s3bucket.New(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+
+		s3BucketResource, err = toCRUDResource(config.Logger, ops)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
+
+	var dynamoDbResource resource.Interface
+	{
+		c := dynamodb.Config{
+			Logger: config.Logger,
+		}
+
+		ops, err := dynamodb.New(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+
+		dynamoDbResource, err = toCRUDResource(config.Logger, ops)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
 	}
 
 	resources := []resource.Interface{
-		testResource,
+		awsClientResource,
+		dynamoDbResource,
+		s3BucketResource,
 	}
 
 	{
@@ -77,4 +117,18 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	}
 
 	return resourceSet, nil
+}
+
+func toCRUDResource(logger micrologger.Logger, ops crud.Interface) (*crud.Resource, error) {
+	c := crud.ResourceConfig{
+		Logger: logger,
+		CRUD:    ops,
+	}
+
+	r, err := crud.NewResource(c)
+	if err != nil {
+		return nil, microerror.Mask(err)
+	}
+
+	return r, nil
 }
