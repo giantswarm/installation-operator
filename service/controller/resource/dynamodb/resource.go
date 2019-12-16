@@ -23,10 +23,7 @@ type Config struct {
 	Logger micrologger.Logger
 
 	// Settings.
-	AccessLogsExpiration int
-	DeleteLoggingBucket  bool
 	IncludeTags          bool
-	InstallationName     string
 }
 
 // Resource implements the s3bucket resource.
@@ -49,22 +46,13 @@ func New(config Config) (*Resource, error) {
 	}
 
 	// Settings.
-	if config.AccessLogsExpiration < 0 {
-		return nil, microerror.Maskf(invalidConfigError, "%T.AccessLogsExpiration must not be lower than 0", config)
-	}
-	if config.InstallationName == "" {
-		return nil, microerror.Maskf(invalidConfigError, "%T.InstallationName must not be empty", config)
-	}
 
 	r := &Resource{
 		// Dependencies.
 		logger: config.Logger,
 
 		// Settings.
-		accessLogsExpiration: config.AccessLogsExpiration,
-		deleteLoggingBucket:  config.DeleteLoggingBucket,
 		includeTags:          config.IncludeTags,
-		installationName:     config.InstallationName,
 	}
 
 	return r, nil
@@ -98,7 +86,7 @@ func containsTableState(tableStateName string, tableStateList []TableState) bool
 }
 
 func (r *Resource) getS3BucketTags(customObject v1alpha1.Installation) []*s3.Tag {
-	tags := key.AWSTags(&customObject, r.installationName)
+	tags := key.AWSTags(&customObject)
 	return awstags.NewS3(tags)
 }
 

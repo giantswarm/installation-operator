@@ -11,9 +11,9 @@ import (
 
 // AWS Tags used for cost analysis and general resource tagging.
 const (
-	TagCluster           = "giantswarm.io/cluster"
-	TagInstallation      = "giantswarm.io/installation"
-	TagOrganization      = "giantswarm.io/organization"
+	TagCluster      = "giantswarm.io/cluster"
+	TagInstallation = "giantswarm.io/installation"
+	TagOrganization = "giantswarm.io/organization"
 )
 
 func ToInstallation(v interface{}) (v1alpha1.Installation, error) {

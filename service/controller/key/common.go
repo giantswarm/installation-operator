@@ -2,13 +2,12 @@ package key
 
 import "fmt"
 
-func AWSTags(getter LabelsGetter, installationName string) map[string]string {
+func AWSTags(getter LabelsGetter) map[string]string {
 	TagCloudProvider := ClusterCloudProviderTag(getter)
 
 	tags := map[string]string{
 		TagCloudProvider: "owned",
-		TagCluster:       InstallationID(getter),
-		TagInstallation:  installationName,
+		TagInstallation:  InstallationID(getter),
 		TagOrganization:  InstallationID(getter),
 	}
 

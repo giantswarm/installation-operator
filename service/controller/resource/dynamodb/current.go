@@ -102,4 +102,3 @@ func (r *Resource) isTableCreated(ctx context.Context, name string) (bool, error
 
 	return true, nil
 }
-

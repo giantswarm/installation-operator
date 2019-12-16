@@ -100,7 +100,6 @@ func Test_BucketCanBeDeleted(t *testing.T) {
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
 			c.DeleteLoggingBucket = tc.deleteLoggingBucket
-			c.InstallationName = tc.installation
 			r, err := New(c)
 			if err != nil {
 				t.Fatal("expected", nil, "got", err)

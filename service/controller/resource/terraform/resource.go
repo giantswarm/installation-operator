@@ -1,47 +1,36 @@
 package terraform
 
 import (
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/giantswarm/apiextensions/pkg/apis/core/v1alpha1"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
-
-	"github.com/giantswarm/installation-operator/pkg/awstags"
-	"github.com/giantswarm/installation-operator/service/controller/key"
 )
 
 const (
 	// Name is the identifier of the resource.
-	Name = "s3bucket"
-	// LifecycleLoggingBucketID is the Lifecycle ID for the logging bucket
-	LifecycleLoggingBucketID = "ExpirationLogs"
+	Name = "terraform"
 )
 
-// Config represents the configuration used to create a new s3bucket resource.
+// Config represents the configuration used to create a new s3module resource.
 type Config struct {
 	// Dependencies.
 	Logger micrologger.Logger
 
 	// Settings.
 	AccessLogsExpiration int
-	DeleteLoggingBucket  bool
+	DeleteLoggingModule  bool
 	IncludeTags          bool
-	InstallationName     string
 }
 
-// Resource implements the s3bucket resource.
+// Resource implements the s3module resource.
 type Resource struct {
 	// Dependencies.
 	logger micrologger.Logger
 
 	// Settings.
-	accessLogsExpiration int
-	deleteLoggingBucket  bool
 	includeTags          bool
-	installationName     string
 }
 
-// New creates a new configured s3bucket resource.
+// New creates a new configured s3module resource.
 func New(config Config) (*Resource, error) {
 	// Dependencies.
 	if config.Logger == nil {
@@ -52,19 +41,13 @@ func New(config Config) (*Resource, error) {
 	if config.AccessLogsExpiration < 0 {
 		return nil, microerror.Maskf(invalidConfigError, "%T.AccessLogsExpiration must not be lower than 0", config)
 	}
-	if config.InstallationName == "" {
-		return nil, microerror.Maskf(invalidConfigError, "%T.InstallationName must not be empty", config)
-	}
 
 	r := &Resource{
 		// Dependencies.
 		logger: config.Logger,
 
 		// Settings.
-		accessLogsExpiration: config.AccessLogsExpiration,
-		deleteLoggingBucket:  config.DeleteLoggingBucket,
 		includeTags:          config.IncludeTags,
-		installationName:     config.InstallationName,
 	}
 
 	return r, nil
@@ -74,22 +57,22 @@ func (r *Resource) Name() string {
 	return Name
 }
 
-func toTablesState(v interface{}) ([]TableState, error) {
+func toModulesState(v interface{}) ([]ModuleState, error) {
 	if v == nil {
-		return []TableState{}, nil
+		return []ModuleState{}, nil
 	}
 
-	tablesState, ok := v.([]TableState)
+	modulesState, ok := v.([]ModuleState)
 	if !ok {
-		return nil, microerror.Maskf(wrongTypeError, "expected '%T', got '%T'", []TableState{}, v)
+		return nil, microerror.Maskf(wrongTypeError, "expected '%T', got '%T'", []ModuleState{}, v)
 	}
 
-	return tablesState, nil
+	return modulesState, nil
 }
 
-func containsTableState(tableStateName string, tableStateList []TableState) bool {
-	for _, b := range tableStateList {
-		if b.Name == tableStateName {
+func containsModuleState(moduleStateName string, moduleStateList []ModuleState) bool {
+	for _, b := range moduleStateList {
+		if b.Name == moduleStateName {
 			return true
 		}
 	}
@@ -97,11 +80,6 @@ func containsTableState(tableStateName string, tableStateList []TableState) bool
 	return false
 }
 
-func (r *Resource) getS3BucketTags(customObject v1alpha1.Installation) []*s3.Tag {
-	tags := key.AWSTags(&customObject, r.installationName)
-	return awstags.NewS3(tags)
-}
-
-func (r *Resource) canBeDeleted(table TableState) bool {
+func (r *Resource) canBeDeleted(module ModuleState) bool {
 	return true
 }

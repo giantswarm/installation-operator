@@ -41,7 +41,6 @@ func Test_Resource_S3Bucket_GetDesiredState(t *testing.T) {
 	{
 		c := Config{
 			Logger:           microloggertest.New(),
-			InstallationName: "test-install",
 		}
 
 		newResource, err = New(c)

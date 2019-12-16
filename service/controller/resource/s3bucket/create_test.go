@@ -87,7 +87,6 @@ func Test_Resource_S3Bucket_newCreate(t *testing.T) {
 	{
 		c := Config{
 			Logger:           microloggertest.New(),
-			InstallationName: "test-install",
 		}
 
 		newResource, err = New(c)

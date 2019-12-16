@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/giantswarm/microerror"
 	"golang.org/x/sync/errgroup"
 
@@ -25,24 +23,23 @@ func (r *Resource) GetCurrentState(ctx context.Context, obj interface{}) (interf
 		return nil, microerror.Mask(err)
 	}
 
-	bucketStateNames := []string{
-		key.TargetLogBucketName(cr),
-		key.BucketName(&cr, cc.Status.AWSAccountID),
+	moduleStateNames := []string{
+		key.ModuleName(&cr),
 	}
 
-	var currentBucketState []TableState
+	var currentModuleState []ModuleState
 	{
-		r.logger.LogCtx(ctx, "level", "debug", "message", "finding the S3 buckets")
+		r.logger.LogCtx(ctx, "level", "debug", "message", "finding the terraform modules")
 
 		g := &errgroup.Group{}
 		m := sync.Mutex{}
 
-		for _, inputBucketName := range bucketStateNames {
-			bucketName := inputBucketName
+		for _, inputModuleName := range moduleStateNames {
+			moduleName := inputModuleName
 
 			g.Go(func() error {
-				inputBucket := TableState{
-					Name: bucketName,
+				inputModule := ModuleState{
+					Name: moduleName,
 				}
 
 				// TODO this check should not be done here. Here we only fetch the
@@ -53,7 +50,7 @@ func (r *Resource) GetCurrentState(ctx context.Context, obj interface{}) (interf
 				//
 				//     https://github.com/giantswarm/giantswarm/issues/5246
 				//
-				isCreated, err := r.isTableCreated(ctx, bucketName)
+				isCreated, err := r.isModuleCreated(ctx, moduleName)
 				if err != nil {
 					return microerror.Mask(err)
 				}
@@ -61,13 +58,13 @@ func (r *Resource) GetCurrentState(ctx context.Context, obj interface{}) (interf
 					return nil
 				}
 
-				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("finding the S3 bucket %#q", bucketName))
+				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("finding the S3 module %#q", moduleName))
 
 				m.Lock()
-				currentBucketState = append(currentBucketState, inputBucket)
+				currentModuleState = append(currentModuleState, inputModule)
 				m.Unlock()
 
-				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("found the S3 bucket %#q", bucketName))
+				r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("found the S3 module %#q", moduleName))
 
 				return nil
 			})
@@ -78,23 +75,20 @@ func (r *Resource) GetCurrentState(ctx context.Context, obj interface{}) (interf
 			return nil, microerror.Mask(err)
 		}
 
-		r.logger.LogCtx(ctx, "level", "debug", "message", "found the S3 buckets")
+		r.logger.LogCtx(ctx, "level", "debug", "message", "found the S3 modules")
 	}
 
-	return currentBucketState, nil
+	return currentModuleState, nil
 }
 
-func (r *Resource) isTableCreated(ctx context.Context, name string) (bool, error) {
+func (r *Resource) isModuleCreated(ctx context.Context, name string) (bool, error) {
 	cc, err := controllercontext.FromContext(ctx)
 	if err != nil {
 		return false, microerror.Mask(err)
 	}
 
-	headInput := &dynamodb.DescribeTableInput{
-		TableName: aws.String(name),
-	}
-	_, err = cc.Client.AWS.DynamoDB.DescribeTable(headInput)
-	if IsTableNotFound(err) {
+	_, err = r.k8sClient.DescribeModule(headInput)
+	if IsNotFound(err) {
 		return false, nil
 	} else if err != nil {
 		return false, microerror.Mask(err)
@@ -102,4 +96,3 @@ func (r *Resource) isTableCreated(ctx context.Context, name string) (bool, error
 
 	return true, nil
 }
-

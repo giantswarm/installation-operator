@@ -27,8 +27,9 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	var awsClientResource resource.Interface
 	{
 		c := awsclient.Config{
-			Logger:        config.Logger,
+			Logger:             config.Logger,
 			ToInstallationFunc: key.ToInstallation,
+			K8sClient:          config.K8sClient.K8sClient(),
 		}
 
 		awsClientResource, err = awsclient.New(c)
@@ -122,7 +123,7 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 func toCRUDResource(logger micrologger.Logger, ops crud.Interface) (*crud.Resource, error) {
 	c := crud.ResourceConfig{
 		Logger: logger,
-		CRUD:    ops,
+		CRUD:   ops,
 	}
 
 	r, err := crud.NewResource(c)

@@ -20,13 +20,11 @@ func (r *Resource) GetDesiredState(ctx context.Context, obj interface{}) (interf
 		return nil, microerror.Mask(err)
 	}
 
-	// First bucket must be the delivery log bucket because otherwise
-	// other buckets can not forward logs to it
-	bucketsState := []TableState{
+	modulesState := []ModuleState{
 		{
-			Name:             key.BucketName(&cr, cc.Status.AWSAccountID),
+			Name: key.ModuleName(&cr),
 		},
 	}
 
-	return bucketsState, nil
+	return modulesState, nil
 }

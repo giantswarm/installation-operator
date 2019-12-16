@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/service/dynamodb"
 	"github.com/giantswarm/microerror"
 
 	"github.com/giantswarm/installation-operator/service/controller/controllercontext"
@@ -17,7 +15,7 @@ func (r *Resource) ApplyCreateChange(ctx context.Context, obj, createChange inte
 	if err != nil {
 		return microerror.Mask(err)
 	}
-	createTablesState, err := toTablesState(createChange)
+	createModulesState, err := toModulesState(createChange)
 	if err != nil {
 		return microerror.Mask(err)
 	}
@@ -26,58 +24,38 @@ func (r *Resource) ApplyCreateChange(ctx context.Context, obj, createChange inte
 		return microerror.Mask(err)
 	}
 
-	for _, tableInput := range createTablesState {
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating dynamodb table %#q", tableInput.Name))
+	for _, moduleInput := range createModulesState {
+		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("creating terraform module %#q", moduleInput.Name))
 
 		{
-			i := &dynamodb.CreateTableInput{
-				TableName: aws.String(fmt.Sprintf("%s-lock", cr.Name)),
-				AttributeDefinitions: []*dynamodb.AttributeDefinition{
-					{
-						AttributeName: aws.String("LockID"),
-						AttributeType: aws.String("S"),
-					},
-				},
-				KeySchema: []*dynamodb.KeySchemaElement{
-					{
-						AttributeName: aws.String("LockID"),
-						KeyType:       aws.String("HASH"),
-					},
-				},
-				ProvisionedThroughput: &dynamodb.ProvisionedThroughput{
-					ReadCapacityUnits:  aws.Int64(5),
-					WriteCapacityUnits: aws.Int64(5),
-				},
-			}
-
-			_, err = cc.Client.AWS.DynamoDB.CreateTable(i)
-			if IsTableAlreadyExists(err) {
+			_, err = r.k8sClient.CreateModule(i)
+			if IsModuleAlreadyExists(err) {
 				// Fall through.
 			} else if err != nil {
 				return microerror.Mask(err)
 			}
 		}
 
-		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created dynamodb table %#q", tableInput.Name))
+		r.logger.LogCtx(ctx, "level", "debug", "message", fmt.Sprintf("created dynamodb module %#q", moduleInput.Name))
 	}
 
 	return nil
 }
 
 func (r *Resource) newCreateChange(ctx context.Context, obj, currentState, desiredState interface{}) (interface{}, error) {
-	currentBuckets, err := toTablesState(currentState)
+	currentModules, err := toModulesState(currentState)
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
-	desiredBuckets, err := toTablesState(desiredState)
+	desiredModules, err := toModulesState(desiredState)
 	if err != nil {
 		return nil, microerror.Mask(err)
 	}
 
-	var createState []TableState
-	for _, bucket := range desiredBuckets {
-		if !containsTableState(bucket.Name, currentBuckets) {
-			createState = append(createState, bucket)
+	var createState []ModuleState
+	for _, module := range desiredModules {
+		if !containsModuleState(module.Name, currentModules) {
+			createState = append(createState, module)
 		}
 	}
 

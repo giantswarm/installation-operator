@@ -17,16 +17,16 @@ const (
 )
 
 type Config struct {
-	K8sClient     kubernetes.Interface
-	Logger        micrologger.Logger
+	K8sClient          kubernetes.Interface
+	Logger             micrologger.Logger
 	ToInstallationFunc func(v interface{}) (v1alpha1.Installation, error)
 
 	AWSConfig aws.Config
 }
 
 type Resource struct {
-	k8sClient     kubernetes.Interface
-	logger        micrologger.Logger
+	k8sClient          kubernetes.Interface
+	logger             micrologger.Logger
 	toInstallationFunc func(v interface{}) (v1alpha1.Installation, error)
 
 	awsConfig aws.Config
@@ -44,8 +44,8 @@ func New(config Config) (*Resource, error) {
 	}
 
 	r := &Resource{
-		k8sClient:     config.K8sClient,
-		logger:        config.Logger,
+		k8sClient:          config.K8sClient,
+		logger:             config.Logger,
 		toInstallationFunc: config.ToInstallationFunc,
 
 		awsConfig: config.AWSConfig,

@@ -11,13 +11,13 @@ import (
 	"github.com/giantswarm/installation-operator/pkg/label"
 )
 
-func Test_Resource_DynamoDBTable_newCreate(t *testing.T) {
+func Test_Resource_DynamoDBModule_newCreate(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
 		obj                  interface{}
 		currentState         interface{}
 		desiredState         interface{}
-		expectedBucketsState []TableState
+		expectedModulesState []ModuleState
 		description          string
 	}{
 		{
@@ -29,9 +29,9 @@ func Test_Resource_DynamoDBTable_newCreate(t *testing.T) {
 					},
 				},
 			},
-			currentState:         []TableState{},
-			desiredState:         []TableState{},
-			expectedBucketsState: []TableState{},
+			currentState:         []ModuleState{},
+			desiredState:         []ModuleState{},
+			expectedModulesState: []ModuleState{},
 		},
 		{
 			description: "current state empty, desired state not empty, expected desired state",
@@ -42,13 +42,13 @@ func Test_Resource_DynamoDBTable_newCreate(t *testing.T) {
 					},
 				},
 			},
-			currentState: []TableState{},
-			desiredState: []TableState{
+			currentState: []ModuleState{},
+			desiredState: []ModuleState{
 				{
 					Name: "desired",
 				},
 			},
-			expectedBucketsState: []TableState{
+			expectedModulesState: []ModuleState{
 				{
 					Name: "desired",
 				},
@@ -63,17 +63,17 @@ func Test_Resource_DynamoDBTable_newCreate(t *testing.T) {
 					},
 				},
 			},
-			currentState: []TableState{
+			currentState: []ModuleState{
 				{
 					Name: "current",
 				},
 			},
-			desiredState: []TableState{
+			desiredState: []ModuleState{
 				{
 					Name: "desired",
 				},
 			},
-			expectedBucketsState: []TableState{
+			expectedModulesState: []ModuleState{
 				{
 					Name: "desired",
 				},
@@ -87,7 +87,6 @@ func Test_Resource_DynamoDBTable_newCreate(t *testing.T) {
 	{
 		c := Config{
 			Logger:           microloggertest.New(),
-			InstallationName: "test-install",
 		}
 
 		newResource, err = New(c)
@@ -102,13 +101,13 @@ func Test_Resource_DynamoDBTable_newCreate(t *testing.T) {
 			if err != nil {
 				t.Errorf("expected '%v' got '%#v'", nil, err)
 			}
-			createChanges, ok := result.([]TableState)
+			createChanges, ok := result.([]ModuleState)
 			if !ok {
 				t.Errorf("expected '%T', got '%T'", createChanges, result)
 			}
-			for _, expectedBucketState := range tc.expectedBucketsState {
-				if !containsTableState(expectedBucketState.Name, createChanges) {
-					t.Errorf("expected %v, got %v", expectedBucketState, createChanges)
+			for _, expectedModuleState := range tc.expectedModulesState {
+				if !containsModuleState(expectedModuleState.Name, createChanges) {
+					t.Errorf("expected %v, got %v", expectedModuleState, createChanges)
 				}
 			}
 		})

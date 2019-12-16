@@ -24,7 +24,7 @@ func (r *Resource) GetDesiredState(ctx context.Context, obj interface{}) (interf
 	// other buckets can not forward logs to it
 	bucketsState := []TableState{
 		{
-			Name:             key.BucketName(&cr, cc.Status.AWSAccountID),
+			Name: key.BucketName(&cr, cc.Status.AWSAccountID),
 		},
 	}
 

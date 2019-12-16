@@ -69,10 +69,8 @@ func Test_TableCanBeDeleted(t *testing.T) {
 			description:         "test env true logging bucket",
 			installation:        "test-install",
 			deleteLoggingBucket: true,
-			bucketState: TableState{
-
-			},
-			expectedValue: true,
+			bucketState:         TableState{},
+			expectedValue:       true,
 		},
 		{
 			description:         "test env false no logging bucket",
@@ -85,22 +83,17 @@ func Test_TableCanBeDeleted(t *testing.T) {
 			description:         "test env false logging bucket",
 			installation:        "test-install",
 			deleteLoggingBucket: false,
-			bucketState: TableState{
-
-			},
-			expectedValue: false,
+			bucketState:         TableState{},
+			expectedValue:       false,
 		},
 	}
 
 	c := Config{}
 
 	c.Logger = microloggertest.New()
-	c.AccessLogsExpiration = 0
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			c.DeleteLoggingBucket = tc.deleteLoggingBucket
-			c.InstallationName = tc.installation
 			r, err := New(c)
 			if err != nil {
 				t.Fatal("expected", nil, "got", err)

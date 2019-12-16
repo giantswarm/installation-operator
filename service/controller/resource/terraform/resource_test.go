@@ -6,27 +6,27 @@ import (
 	"github.com/giantswarm/micrologger/microloggertest"
 )
 
-func Test_ContainsTableState(t *testing.T) {
+func Test_ContainsModuleState(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
 		description      string
 		installation     string
-		bucketNameToFind string
-		bucketStateList  []TableState
+		moduleNameToFind string
+		moduleStateList  []ModuleState
 		expectedValue    bool
 	}{
 		{
 			description:      "basic match",
 			installation:     "test-install",
-			bucketNameToFind: "bck1",
-			bucketStateList:  []TableState{},
+			moduleNameToFind: "bck1",
+			moduleStateList:  []ModuleState{},
 			expectedValue:    false,
 		},
 	}
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			result := containsTableState(tc.bucketNameToFind, tc.bucketStateList)
+			result := containsModuleState(tc.moduleNameToFind, tc.moduleStateList)
 
 			if result != tc.expectedValue {
 				t.Fatalf("Expected %t tags, found %t", tc.expectedValue, result)
@@ -35,60 +35,56 @@ func Test_ContainsTableState(t *testing.T) {
 	}
 }
 
-func Test_TableCanBeDeleted(t *testing.T) {
+func Test_ModuleCanBeDeleted(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
 		description         string
 		installation        string
-		deleteLoggingBucket bool
-		bucketState         TableState
+		deleteLoggingModule bool
+		moduleState         ModuleState
 		expectedValue       bool
 	}{
 		{
 			description:         "test env true",
 			installation:        "test-install",
-			deleteLoggingBucket: true,
-			bucketState:         TableState{},
+			deleteLoggingModule: true,
+			moduleState:         ModuleState{},
 			expectedValue:       true,
 		},
 		{
 			description:         "test env false",
 			installation:        "test-install",
-			deleteLoggingBucket: false,
-			bucketState:         TableState{},
+			deleteLoggingModule: false,
+			moduleState:         ModuleState{},
 			expectedValue:       true,
 		},
 		{
-			description:         "test env true no logging bucket",
+			description:         "test env true no logging module",
 			installation:        "test-install",
-			deleteLoggingBucket: true,
-			bucketState:         TableState{},
+			deleteLoggingModule: true,
+			moduleState:         ModuleState{},
 			expectedValue:       true,
 		},
 		{
-			description:         "test env true logging bucket",
+			description:         "test env true logging module",
 			installation:        "test-install",
-			deleteLoggingBucket: true,
-			bucketState: TableState{
-
-			},
-			expectedValue: true,
-		},
-		{
-			description:         "test env false no logging bucket",
-			installation:        "test-install",
-			deleteLoggingBucket: true,
-			bucketState:         TableState{},
+			deleteLoggingModule: true,
+			moduleState:         ModuleState{},
 			expectedValue:       true,
 		},
 		{
-			description:         "test env false logging bucket",
+			description:         "test env false no logging module",
 			installation:        "test-install",
-			deleteLoggingBucket: false,
-			bucketState: TableState{
-
-			},
-			expectedValue: false,
+			deleteLoggingModule: true,
+			moduleState:         ModuleState{},
+			expectedValue:       true,
+		},
+		{
+			description:         "test env false logging module",
+			installation:        "test-install",
+			deleteLoggingModule: false,
+			moduleState:         ModuleState{},
+			expectedValue:       false,
 		},
 	}
 
@@ -99,13 +95,12 @@ func Test_TableCanBeDeleted(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.description, func(t *testing.T) {
-			c.DeleteLoggingBucket = tc.deleteLoggingBucket
-			c.InstallationName = tc.installation
+			c.DeleteLoggingModule = tc.deleteLoggingModule
 			r, err := New(c)
 			if err != nil {
 				t.Fatal("expected", nil, "got", err)
 			}
-			result := r.canBeDeleted(tc.bucketState)
+			result := r.canBeDeleted(tc.moduleState)
 
 			if result != tc.expectedValue {
 				t.Fatalf("Expected %t, found %t", tc.expectedValue, result)

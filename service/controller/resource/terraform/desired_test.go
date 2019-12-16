@@ -12,7 +12,7 @@ import (
 	"github.com/giantswarm/installation-operator/service/controller/controllercontext"
 )
 
-func Test_Resource_DynamoDBTable_GetDesiredState(t *testing.T) {
+func Test_Resource_DynamoDBModule_GetDesiredState(t *testing.T) {
 	t.Parallel()
 	testCases := []struct {
 		obj           interface{}
@@ -20,7 +20,7 @@ func Test_Resource_DynamoDBTable_GetDesiredState(t *testing.T) {
 		description   string
 	}{
 		{
-			description: "Get bucket name from custom object.",
+			description: "Get module name from custom object.",
 			obj: &v1alpha1.Installation{
 				ObjectMeta: metav1.ObjectMeta{
 					Labels: map[string]string{
@@ -41,7 +41,6 @@ func Test_Resource_DynamoDBTable_GetDesiredState(t *testing.T) {
 	{
 		c := Config{
 			Logger:           microloggertest.New(),
-			InstallationName: "test-install",
 		}
 
 		newResource, err = New(c)
@@ -59,15 +58,15 @@ func Test_Resource_DynamoDBTable_GetDesiredState(t *testing.T) {
 				t.Fatalf("expected '%v' got '%#v'", nil, err)
 			}
 
-			desiredBuckets, ok := result.([]TableState)
+			desiredModules, ok := result.([]ModuleState)
 			if !ok {
-				t.Fatalf("case expected '%T', got '%T'", desiredBuckets, result)
+				t.Fatalf("case expected '%T', got '%T'", desiredModules, result)
 			}
 
-			// Order should be respected in the slice returned (always delivery log bucket first)
-			for key, desiredBucket := range desiredBuckets {
-				if tc.expectedNames[key] != desiredBucket.Name {
-					t.Fatalf("expected bucket name %q got %q", tc.expectedNames[key], desiredBucket.Name)
+			// Order should be respected in the slice returned (always delivery log module first)
+			for key, desiredModule := range desiredModules {
+				if tc.expectedNames[key] != desiredModule.Name {
+					t.Fatalf("expected module name %q got %q", tc.expectedNames[key], desiredModule.Name)
 				}
 			}
 		})
