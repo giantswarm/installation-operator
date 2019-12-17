@@ -16,7 +16,7 @@ type Config struct {
 }
 
 type Resource struct {
-	logger micrologger.Logger
+	logger   micrologger.Logger
 	tfClient versioned.Interface
 }
 
@@ -29,7 +29,7 @@ func New(config Config) (*Resource, error) {
 	}
 
 	r := &Resource{
-		logger: config.Logger,
+		logger:   config.Logger,
 		tfClient: config.TFClient,
 	}
 

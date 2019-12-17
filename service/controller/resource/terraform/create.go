@@ -20,14 +20,14 @@ func (r *Resource) EnsureCreated(ctx context.Context, obj interface{}) error {
 	if errors.IsNotFound(err) {
 		module := tfv1.Module{
 			ObjectMeta: metav1.ObjectMeta{
-				Name: cr.Name,
+				Name:      cr.Name,
 				Namespace: cr.Namespace,
 			},
-			Spec:       tfv1.ModuleSpec{
-					ModuleContent: tfv1.ModuleContent{
-						Content: nil,
-						Git:     tfv1.GitLocation{},
-					},
+			Spec: tfv1.ModuleSpec{
+				ModuleContent: tfv1.ModuleContent{
+					Content: nil,
+					Git:     tfv1.GitLocation{},
+				},
 			},
 		}
 		_, err = r.tfClient.TerraformcontrollerV1().Modules(cr.Namespace).Create(&module)

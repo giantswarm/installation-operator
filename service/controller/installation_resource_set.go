@@ -28,7 +28,7 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	{
 		c := terraform.Config{
 			TFClient: config.TFClient,
-			Logger:    config.Logger,
+			Logger:   config.Logger,
 		}
 
 		terraformResource, err = terraform.New(c)
