@@ -3,6 +3,7 @@ package terraform
 import (
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
+	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
 )
 
 const (
@@ -12,42 +13,28 @@ const (
 
 // Config represents the configuration used to create a new s3module resource.
 type Config struct {
-	// Dependencies.
 	Logger micrologger.Logger
-
-	// Settings.
-	AccessLogsExpiration int
-	DeleteLoggingModule  bool
-	IncludeTags          bool
+	TFClient versioned.Interface
 }
 
-// Resource implements the s3module resource.
+// Resource implements the terraform resource.
 type Resource struct {
-	// Dependencies.
 	logger micrologger.Logger
-
-	// Settings.
-	includeTags          bool
+	tfClient versioned.Interface
 }
 
 // New creates a new configured s3module resource.
 func New(config Config) (*Resource, error) {
-	// Dependencies.
 	if config.Logger == nil {
 		return nil, microerror.Maskf(invalidConfigError, "%T.Logger must not be empty", config)
 	}
-
-	// Settings.
-	if config.AccessLogsExpiration < 0 {
-		return nil, microerror.Maskf(invalidConfigError, "%T.AccessLogsExpiration must not be lower than 0", config)
+	if config.TFClient == nil {
+		return nil, microerror.Maskf(invalidConfigError, "%T.TFClient must not be empty", config)
 	}
 
 	r := &Resource{
-		// Dependencies.
 		logger: config.Logger,
-
-		// Settings.
-		includeTags:          config.IncludeTags,
+		tfClient: config.TFClient,
 	}
 
 	return r, nil

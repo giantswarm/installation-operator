@@ -14,6 +14,7 @@ import (
 	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/versionbundle"
 	"github.com/rancher/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1"
+	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/rest"
 
@@ -94,12 +95,21 @@ func New(config Config) (*Service, error) {
 		}
 	}
 
+	var tfClient versioned.Interface
+	{
+		tfClient, err = versioned.NewForConfig(restConfig)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
+
 	var installationController *controller.Installation
 	{
 
 		c := controller.InstallationConfig{
 			K8sClient: k8sClient,
 			Logger:    config.Logger,
+			TFClient: tfClient,
 		}
 
 		installationController, err = controller.NewInstallation(c)

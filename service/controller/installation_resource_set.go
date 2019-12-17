@@ -9,73 +9,40 @@ import (
 	"github.com/giantswarm/operatorkit/resource/crud"
 	"github.com/giantswarm/operatorkit/resource/wrapper/metricsresource"
 	"github.com/giantswarm/operatorkit/resource/wrapper/retryresource"
+	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
 
-	"github.com/giantswarm/installation-operator/service/controller/key"
-	"github.com/giantswarm/installation-operator/service/controller/resource/awsclient"
-	"github.com/giantswarm/installation-operator/service/controller/resource/dynamodb"
-	"github.com/giantswarm/installation-operator/service/controller/resource/s3bucket"
+	"github.com/giantswarm/installation-operator/service/controller/resource/terraform"
 )
 
 type installationResourceSetConfig struct {
 	K8sClient k8sclient.Interface
 	Logger    micrologger.Logger
+	TFClient versioned.Interface
 }
 
 func newInstallationResourceSet(config installationResourceSetConfig) (*controller.ResourceSet, error) {
 	var err error
 
-	var awsClientResource resource.Interface
+	var terraformResource resource.Interface
 	{
-		c := awsclient.Config{
-			Logger:             config.Logger,
-			ToInstallationFunc: key.ToInstallation,
-			K8sClient:          config.K8sClient.K8sClient(),
-		}
-
-		awsClientResource, err = awsclient.New(c)
-		if err != nil {
-			return nil, microerror.Mask(err)
-		}
-	}
-
-	var s3BucketResource resource.Interface
-	{
-		c := s3bucket.Config{
+		c := terraform.Config{
+			TFClient: config.TFClient,
 			Logger: config.Logger,
 		}
 
-		ops, err := s3bucket.New(c)
+		ops, err := terraform.New(c)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
 
-		s3BucketResource, err = toCRUDResource(config.Logger, ops)
-		if err != nil {
-			return nil, microerror.Mask(err)
-		}
-	}
-
-	var dynamoDbResource resource.Interface
-	{
-		c := dynamodb.Config{
-			Logger: config.Logger,
-		}
-
-		ops, err := dynamodb.New(c)
-		if err != nil {
-			return nil, microerror.Mask(err)
-		}
-
-		dynamoDbResource, err = toCRUDResource(config.Logger, ops)
+		terraformResource, err = toCRUDResource(config.Logger, ops)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
 	}
 
 	resources := []resource.Interface{
-		awsClientResource,
-		dynamoDbResource,
-		s3BucketResource,
+		terraformResource,
 	}
 
 	{
