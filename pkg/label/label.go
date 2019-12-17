@@ -5,7 +5,8 @@ const (
 )
 
 const (
-	Installation  = "giantswarm.io/cluster"
-	Provider      = "giantswarm.io/provider"
-	VersionBundle = "giantswarm.io/version-bundle"
+	Installation    = "giantswarm.io/installation"
+	Provider        = "giantswarm.io/provider"
+	VersionBundle   = "giantswarm.io/version-bundle"
+	OperatorVersion = "installation-operator.giantswarm.io/version"
 )

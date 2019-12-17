@@ -16,7 +16,7 @@ import (
 type InstallationConfig struct {
 	K8sClient k8sclient.Interface
 	Logger    micrologger.Logger
-	TFClient versioned.Interface
+	TFClient  versioned.Interface
 }
 
 type Installation struct {
@@ -34,12 +34,12 @@ func NewInstallation(config InstallationConfig) (*Installation, error) {
 	var operatorkitController *controller.Controller
 	{
 		c := controller.Config{
-			CRD:          v1alpha1.NewAWSClusterConfigCRD(),
+			CRD:          v1alpha1.NewInstallationCRD(),
 			K8sClient:    config.K8sClient,
 			Logger:       config.Logger,
 			ResourceSets: resourceSets,
 			NewRuntimeObjectFunc: func() runtime.Object {
-				return new(v1alpha1.AWSClusterConfig)
+				return new(v1alpha1.Installation)
 			},
 			Name: project.Name() + "-installation-controller",
 		}
@@ -65,7 +65,7 @@ func newInstallationResourceSets(config InstallationConfig) ([]*controller.Resou
 		c := installationResourceSetConfig{
 			K8sClient: config.K8sClient,
 			Logger:    config.Logger,
-			TFClient: config.TFClient,
+			TFClient:  config.TFClient,
 		}
 
 		installationResourceSet, err = newInstallationResourceSet(c)

@@ -6,18 +6,19 @@ import (
 	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/operatorkit/controller"
 	"github.com/giantswarm/operatorkit/resource"
-	"github.com/giantswarm/operatorkit/resource/crud"
 	"github.com/giantswarm/operatorkit/resource/wrapper/metricsresource"
 	"github.com/giantswarm/operatorkit/resource/wrapper/retryresource"
 	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
 
+	"github.com/giantswarm/installation-operator/pkg/project"
+	"github.com/giantswarm/installation-operator/service/controller/key"
 	"github.com/giantswarm/installation-operator/service/controller/resource/terraform"
 )
 
 type installationResourceSetConfig struct {
 	K8sClient k8sclient.Interface
 	Logger    micrologger.Logger
-	TFClient versioned.Interface
+	TFClient  versioned.Interface
 }
 
 func newInstallationResourceSet(config installationResourceSetConfig) (*controller.ResourceSet, error) {
@@ -27,15 +28,10 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	{
 		c := terraform.Config{
 			TFClient: config.TFClient,
-			Logger: config.Logger,
+			Logger:    config.Logger,
 		}
 
-		ops, err := terraform.New(c)
-		if err != nil {
-			return nil, microerror.Mask(err)
-		}
-
-		terraformResource, err = toCRUDResource(config.Logger, ops)
+		terraformResource, err = terraform.New(c)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
@@ -66,6 +62,14 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	}
 
 	handlesFunc := func(obj interface{}) bool {
+		cr, err := key.ToInstallation(obj)
+		if err != nil {
+			return false
+		}
+
+		if key.OperatorVersion(&cr) == project.BundleVersion() {
+			return true
+		}
 
 		return false
 	}
@@ -85,18 +89,4 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	}
 
 	return resourceSet, nil
-}
-
-func toCRUDResource(logger micrologger.Logger, ops crud.Interface) (*crud.Resource, error) {
-	c := crud.ResourceConfig{
-		Logger: logger,
-		CRUD:   ops,
-	}
-
-	r, err := crud.NewResource(c)
-	if err != nil {
-		return nil, microerror.Mask(err)
-	}
-
-	return r, nil
 }

@@ -2,72 +2,6 @@
 
 
 [[projects]]
-  digest = "1:c8018d34e258ba34c843b4f9960dc234ef0f00816967bd2ff65d60676c553192"
-  name = "github.com/aws/aws-sdk-go"
-  packages = [
-    "aws",
-    "aws/arn",
-    "aws/awserr",
-    "aws/awsutil",
-    "aws/client",
-    "aws/client/metadata",
-    "aws/corehandlers",
-    "aws/credentials",
-    "aws/credentials/ec2rolecreds",
-    "aws/credentials/endpointcreds",
-    "aws/credentials/processcreds",
-    "aws/credentials/stscreds",
-    "aws/crr",
-    "aws/csm",
-    "aws/defaults",
-    "aws/ec2metadata",
-    "aws/endpoints",
-    "aws/request",
-    "aws/session",
-    "aws/signer/v4",
-    "internal/ini",
-    "internal/s3err",
-    "internal/sdkio",
-    "internal/sdkmath",
-    "internal/sdkrand",
-    "internal/sdkuri",
-    "internal/shareddefaults",
-    "private/protocol",
-    "private/protocol/ec2query",
-    "private/protocol/eventstream",
-    "private/protocol/eventstream/eventstreamapi",
-    "private/protocol/json/jsonutil",
-    "private/protocol/jsonrpc",
-    "private/protocol/query",
-    "private/protocol/query/queryutil",
-    "private/protocol/rest",
-    "private/protocol/restxml",
-    "private/protocol/xml/xmlutil",
-    "service/autoscaling",
-    "service/cloudformation",
-    "service/dynamodb",
-    "service/ec2",
-    "service/ec2/ec2iface",
-    "service/elb",
-    "service/elb/elbiface",
-    "service/iam",
-    "service/iam/iamiface",
-    "service/kms",
-    "service/kms/kmsiface",
-    "service/route53",
-    "service/s3",
-    "service/s3/internal/arn",
-    "service/s3/s3iface",
-    "service/sts",
-    "service/sts/stsiface",
-    "service/support",
-    "service/support/supportiface",
-  ]
-  pruneopts = "UT"
-  revision = "b4f52c45248fcab90c27f5509504b840ca2fcf10"
-  version = "v1.26.2"
-
-[[projects]]
   digest = "1:d6afaeed1502aa28e80a4ed0981d570ad91b2579193404256ce672ed0a609e0d"
   name = "github.com/beorn7/perks"
   packages = ["quantile"]
@@ -156,14 +90,6 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:5164d17414266145c643e4997dacbc32e6e1ad552c3c70a78837f64d9a0140ea"
-  name = "github.com/giantswarm/exporterkit"
-  packages = ["collector"]
-  pruneopts = "UT"
-  revision = "9749deade60f7624620aa7158a4f38c87ea23795"
-
-[[projects]]
-  branch = "master"
   digest = "1:5ea4a83b027c56f8f5f5bae17671964275cbcd50115528ed9dc733f9330cac79"
   name = "github.com/giantswarm/k8sclient"
   packages = [
@@ -173,14 +99,6 @@
   ]
   pruneopts = "UT"
   revision = "f75fead2ae064a2ae20a117cc1cd1d2f6d050641"
-
-[[projects]]
-  branch = "master"
-  digest = "1:6175366122ba7bc5c75e1664a202b69b18ac69e23c7ac8f02c6190542ca4b39b"
-  name = "github.com/giantswarm/kubelock"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "0d77173ef40907be60a52d54c342ddc73865bc2c"
 
 [[projects]]
   branch = "master"
@@ -439,13 +357,6 @@
   pruneopts = "UT"
   revision = "76626ae9c91c4f2a10f34cad8ce83ea42c93bb75"
   version = "v1.0"
-
-[[projects]]
-  digest = "1:bb81097a5b62634f3e9fec1014657855610c82d19b9a40c17612e32651e35dca"
-  name = "github.com/jmespath/go-jmespath"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "c2b33e84"
 
 [[projects]]
   digest = "1:beb5b4f42a25056f0aa291b5eadd21e2f2903a05d15dfe7caf7eaee7e12fa972"
@@ -1099,33 +1010,9 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/aws/aws-sdk-go/aws",
-    "github.com/aws/aws-sdk-go/aws/credentials",
-    "github.com/aws/aws-sdk-go/aws/credentials/stscreds",
-    "github.com/aws/aws-sdk-go/aws/session",
-    "github.com/aws/aws-sdk-go/service/autoscaling",
-    "github.com/aws/aws-sdk-go/service/cloudformation",
-    "github.com/aws/aws-sdk-go/service/dynamodb",
-    "github.com/aws/aws-sdk-go/service/ec2",
-    "github.com/aws/aws-sdk-go/service/ec2/ec2iface",
-    "github.com/aws/aws-sdk-go/service/elb",
-    "github.com/aws/aws-sdk-go/service/elb/elbiface",
-    "github.com/aws/aws-sdk-go/service/iam",
-    "github.com/aws/aws-sdk-go/service/iam/iamiface",
-    "github.com/aws/aws-sdk-go/service/kms",
-    "github.com/aws/aws-sdk-go/service/kms/kmsiface",
-    "github.com/aws/aws-sdk-go/service/route53",
-    "github.com/aws/aws-sdk-go/service/s3",
-    "github.com/aws/aws-sdk-go/service/s3/s3iface",
-    "github.com/aws/aws-sdk-go/service/sts",
-    "github.com/aws/aws-sdk-go/service/sts/stsiface",
-    "github.com/aws/aws-sdk-go/service/support",
-    "github.com/aws/aws-sdk-go/service/support/supportiface",
     "github.com/giantswarm/apiextensions/pkg/apis/core/v1alpha1",
-    "github.com/giantswarm/exporterkit/collector",
     "github.com/giantswarm/k8sclient",
     "github.com/giantswarm/k8sclient/k8srestconfig",
-    "github.com/giantswarm/kubelock",
     "github.com/giantswarm/microendpoint/endpoint/healthz",
     "github.com/giantswarm/microendpoint/endpoint/version",
     "github.com/giantswarm/microendpoint/service/version",
@@ -1137,21 +1024,15 @@
     "github.com/giantswarm/operatorkit/controller",
     "github.com/giantswarm/operatorkit/flag/service/kubernetes",
     "github.com/giantswarm/operatorkit/resource",
-    "github.com/giantswarm/operatorkit/resource/crud",
     "github.com/giantswarm/operatorkit/resource/wrapper/metricsresource",
     "github.com/giantswarm/operatorkit/resource/wrapper/retryresource",
     "github.com/giantswarm/versionbundle",
-    "github.com/prometheus/client_golang/prometheus",
     "github.com/rancher/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1",
     "github.com/rancher/terraform-controller/pkg/generated/clientset/versioned",
     "github.com/spf13/viper",
-    "k8s.io/api/core/v1",
     "k8s.io/apimachinery/pkg/api/errors",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/apimachinery/pkg/runtime",
-    "k8s.io/apimachinery/pkg/runtime/schema",
-    "k8s.io/client-go/dynamic",
-    "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/rest",
   ]
   solver-name = "gps-cdcl"

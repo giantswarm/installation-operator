@@ -20,7 +20,6 @@ import (
 
 	"github.com/giantswarm/installation-operator/flag"
 	"github.com/giantswarm/installation-operator/pkg/project"
-	"github.com/giantswarm/installation-operator/service/collector"
 	"github.com/giantswarm/installation-operator/service/controller"
 )
 
@@ -37,7 +36,6 @@ type Service struct {
 
 	bootOnce               sync.Once
 	installationController *controller.Installation
-	operatorCollector      *collector.Set
 }
 
 // New creates a new configured service object.
@@ -109,23 +107,10 @@ func New(config Config) (*Service, error) {
 		c := controller.InstallationConfig{
 			K8sClient: k8sClient,
 			Logger:    config.Logger,
-			TFClient: tfClient,
+			TFClient:  tfClient,
 		}
 
 		installationController, err = controller.NewInstallation(c)
-		if err != nil {
-			return nil, microerror.Mask(err)
-		}
-	}
-
-	var operatorCollector *collector.Set
-	{
-		c := collector.SetConfig{
-			K8sClient: k8sClient.K8sClient(),
-			Logger:    config.Logger,
-		}
-
-		operatorCollector, err = collector.NewSet(c)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
@@ -153,7 +138,6 @@ func New(config Config) (*Service, error) {
 
 		bootOnce:               sync.Once{},
 		installationController: installationController,
-		operatorCollector:      operatorCollector,
 	}
 
 	return s, nil
@@ -161,8 +145,6 @@ func New(config Config) (*Service, error) {
 
 func (s *Service) Boot(ctx context.Context) {
 	s.bootOnce.Do(func() {
-		go s.operatorCollector.Boot(ctx)
-
 		go s.installationController.Boot(ctx)
 	})
 }
