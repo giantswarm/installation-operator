@@ -1,4 +1,4 @@
-package terraform
+package module
 
 import (
 	"github.com/giantswarm/microerror"

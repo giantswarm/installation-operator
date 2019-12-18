@@ -1,10 +1,10 @@
-package terraform
+package secret
 
 import (
 	"context"
 
 	"github.com/giantswarm/microerror"
-	tfv1 "github.com/rancher/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1"
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -16,21 +16,23 @@ func (r *Resource) EnsureCreated(ctx context.Context, obj interface{}) error {
 	if err != nil {
 		return microerror.Mask(err)
 	}
-	_, err = r.tfClient.TerraformcontrollerV1().Modules(cr.Namespace).Get(cr.Name, metav1.GetOptions{})
+	if cr.Spec.Provider != "aws" {
+		r.logger.LogCtx(ctx, "message", "provider not supported", "provider", cr.Spec.Provider)
+		return nil
+	}
+	_, err = r.k8sClient.K8sClient().CoreV1().Secrets(cr.Namespace).Get(cr.Name, metav1.GetOptions{})
 	if errors.IsNotFound(err) {
-		module := tfv1.Module{
+		secret := v1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      cr.Name,
 				Namespace: cr.Namespace,
 			},
-			Spec: tfv1.ModuleSpec{
-				ModuleContent: tfv1.ModuleContent{
-					Content: nil,
-					Git:     tfv1.GitLocation{},
-				},
+			StringData: map[string]string{
+				"do_token": "",
+				"do_name": "terraform-controller-test",
 			},
 		}
-		_, err = r.tfClient.TerraformcontrollerV1().Modules(cr.Namespace).Create(&module)
+		_, err = r.k8sClient.K8sClient().CoreV1().Secrets(cr.Namespace).Create(&secret)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -38,6 +40,5 @@ func (r *Resource) EnsureCreated(ctx context.Context, obj interface{}) error {
 		return microerror.Mask(err)
 	}
 
-	r.logger.LogCtx(ctx, "ensured created")
 	return nil
 }

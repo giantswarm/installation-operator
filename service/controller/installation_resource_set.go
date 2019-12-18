@@ -12,7 +12,10 @@ import (
 
 	"github.com/giantswarm/installation-operator/pkg/project"
 	"github.com/giantswarm/installation-operator/service/controller/key"
-	"github.com/giantswarm/installation-operator/service/controller/resource/terraform"
+	"github.com/giantswarm/installation-operator/service/controller/resource/env"
+	"github.com/giantswarm/installation-operator/service/controller/resource/module"
+	"github.com/giantswarm/installation-operator/service/controller/resource/secret"
+	"github.com/giantswarm/installation-operator/service/controller/resource/state"
 )
 
 type installationResourceSetConfig struct {
@@ -24,21 +27,63 @@ type installationResourceSetConfig struct {
 func newInstallationResourceSet(config installationResourceSetConfig) (*controller.ResourceSet, error) {
 	var err error
 
-	var terraformResource resource.Interface
+	var envResource resource.Interface
 	{
-		c := terraform.Config{
+		c := env.Config{
+			K8sClient: config.K8sClient,
+			Logger:   config.Logger,
+		}
+
+		envResource, err = env.New(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
+
+	var secretResource resource.Interface
+	{
+		c := secret.Config{
+			K8sClient: config.K8sClient,
+			Logger:   config.Logger,
+		}
+
+		secretResource, err = secret.New(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
+
+	var moduleResource resource.Interface
+	{
+		c := module.Config{
 			TFClient: config.TFClient,
 			Logger:   config.Logger,
 		}
 
-		terraformResource, err = terraform.New(c)
+		moduleResource, err = module.New(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
+
+	var stateResource resource.Interface
+	{
+		c := state.Config{
+			TFClient: config.TFClient,
+			Logger:   config.Logger,
+		}
+
+		stateResource, err = state.New(c)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
 	}
 
 	resources := []resource.Interface{
-		terraformResource,
+		envResource,
+		secretResource,
+		moduleResource,
+		stateResource,
 	}
 
 	{

@@ -5,3 +5,24 @@ metadata:
   namespace: default
   labels:
     installation-operator.giantswarm.io/version: "0.0.1"
+spec:
+  base: 'george.us-east-1.aws.gigantic.io'
+  codename: 'george'
+  customer: 'giantswarm'
+  solutionEngineer: ''
+  pipeline: 'testing'
+  provider: 'aws'
+  aws:
+    region: us-east-1
+    hostCluster:
+      account: ''
+      adminRoleARN: ''
+      cloudtrailBucket: ''
+      guardDuty: false
+    guestCluster:
+      account: ''
+      adminRoleARN: ''
+      cloudtrailBucket: ''
+      guardDuty: false
+  draughtsmanSecret: 'george-draughtsman'
+  draughtsmanConfigMap: 'george-draughtsman'
