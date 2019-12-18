@@ -29,7 +29,7 @@ func (r *Resource) EnsureCreated(ctx context.Context, obj interface{}) error {
 			},
 			StringData: map[string]string{
 				"do_token": "",
-				"do_name": "terraform-controller-test",
+				"do_name":  "terraform-controller-test",
 			},
 		}
 		_, err = r.k8sClient.K8sClient().CoreV1().Secrets(cr.Namespace).Create(&secret)

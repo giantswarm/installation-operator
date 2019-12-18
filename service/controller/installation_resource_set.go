@@ -31,7 +31,7 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	{
 		c := env.Config{
 			K8sClient: config.K8sClient,
-			Logger:   config.Logger,
+			Logger:    config.Logger,
 		}
 
 		envResource, err = env.New(c)
@@ -44,7 +44,7 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	{
 		c := secret.Config{
 			K8sClient: config.K8sClient,
-			Logger:   config.Logger,
+			Logger:    config.Logger,
 		}
 
 		secretResource, err = secret.New(c)
