@@ -9,8 +9,8 @@ func NewVersionBundle() versionbundle.Bundle {
 		Changelogs: []versionbundle.Changelog{
 			{
 				Component:   "installation-operator",
-				Description: "TODO",
-				Kind:        versionbundle.KindChanged,
+				Description: "Initial release",
+				Kind:        versionbundle.KindAdded,
 			},
 		},
 		Components: []versionbundle.Component{},

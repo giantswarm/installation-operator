@@ -35,6 +35,8 @@ var knownTypes = []runtime.Object{
 	&FlannelConfigList{},
 	&IngressConfig{},
 	&IngressConfigList{},
+	&Installation{},
+	&InstallationList{},
 	&NodeConfig{},
 	&NodeConfigList{},
 	&StorageConfig{},

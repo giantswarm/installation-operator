@@ -8,33 +8,37 @@ import (
 	"github.com/giantswarm/operatorkit/resource"
 	"github.com/giantswarm/operatorkit/resource/wrapper/metricsresource"
 	"github.com/giantswarm/operatorkit/resource/wrapper/retryresource"
+	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
 
-	"github.com/giantswarm/installation-operator/service/controller/resource/test"
+	"github.com/giantswarm/installation-operator/pkg/project"
+	"github.com/giantswarm/installation-operator/service/controller/key"
+	"github.com/giantswarm/installation-operator/service/controller/resource/terraform"
 )
 
-type todoResourceSetConfig struct {
+type installationResourceSetConfig struct {
 	K8sClient k8sclient.Interface
 	Logger    micrologger.Logger
+	TFClient  versioned.Interface
 }
 
-func newTODOResourceSet(config todoResourceSetConfig) (*controller.ResourceSet, error) {
+func newInstallationResourceSet(config installationResourceSetConfig) (*controller.ResourceSet, error) {
 	var err error
 
-	var testResource resource.Interface
+	var terraformResource resource.Interface
 	{
-		c := test.Config{
-			K8sClient: config.K8sClient,
-			Logger:    config.Logger,
+		c := terraform.Config{
+			TFClient: config.TFClient,
+			Logger:   config.Logger,
 		}
 
-		testResource, err = test.New(c)
+		terraformResource, err = terraform.New(c)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
 	}
 
 	resources := []resource.Interface{
-		testResource,
+		terraformResource,
 	}
 
 	{
@@ -58,6 +62,14 @@ func newTODOResourceSet(config todoResourceSetConfig) (*controller.ResourceSet, 
 	}
 
 	handlesFunc := func(obj interface{}) bool {
+		cr, err := key.ToInstallation(obj)
+		if err != nil {
+			return false
+		}
+
+		if key.OperatorVersion(&cr) == project.BundleVersion() {
+			return true
+		}
 
 		return false
 	}

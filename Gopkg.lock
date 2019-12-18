@@ -59,7 +59,7 @@
 
 [[projects]]
   branch = "add-installation-type"
-  digest = "1:5eb0a5f0e7960e8ba6dc403dc482a6f992db939fd1cf5924c4078ab9dbbc365f"
+  digest = "1:050855b0345d46c124cde57b934c5cdab4f6dec188b957e321c87c207beb54f6"
   name = "github.com/giantswarm/apiextensions"
   packages = [
     "pkg/apis/application/v1alpha1",
@@ -78,7 +78,7 @@
     "pkg/clientset/versioned/typed/release/v1alpha1",
   ]
   pruneopts = "UT"
-  revision = "3206cb7f89c6e10144e15a07c6432e17a7ce7bbd"
+  revision = "35462f95ea7f6343f84610d2f43cbef167f7346f"
 
 [[projects]]
   branch = "master"
@@ -87,14 +87,6 @@
   packages = ["."]
   pruneopts = "UT"
   revision = "4dd4911251929a0ac4c4f3d8c4bda482a9e09f30"
-
-[[projects]]
-  branch = "master"
-  digest = "1:5164d17414266145c643e4997dacbc32e6e1ad552c3c70a78837f64d9a0140ea"
-  name = "github.com/giantswarm/exporterkit"
-  packages = ["collector"]
-  pruneopts = "UT"
-  revision = "9749deade60f7624620aa7158a4f38c87ea23795"
 
 [[projects]]
   branch = "master"
@@ -497,6 +489,31 @@
   pruneopts = "UT"
   revision = "6d489fc7f1d9cd890a250f3ea3431b1744b9623f"
   version = "v0.0.8"
+
+[[projects]]
+  branch = "master"
+  digest = "1:3d45825d5405b0c7401a0a9ef9fe405211ba32004e1c798f6c739d34fed723f9"
+  name = "github.com/rancher/terraform-controller"
+  packages = [
+    "pkg/apis/terraformcontroller.cattle.io",
+    "pkg/apis/terraformcontroller.cattle.io/v1",
+    "pkg/generated/clientset/versioned",
+    "pkg/generated/clientset/versioned/scheme",
+    "pkg/generated/clientset/versioned/typed/terraformcontroller.cattle.io/v1",
+  ]
+  pruneopts = "UT"
+  revision = "d28d2f2bb8caa67877e6efe1bd2d22094e810a17"
+
+[[projects]]
+  digest = "1:82b24f8564e54a7fdc32597a2fc2a22ffc6ae4217b00c57d27217c4c835cba10"
+  name = "github.com/rancher/wrangler"
+  packages = [
+    "pkg/condition",
+    "pkg/genericcondition",
+  ]
+  pruneopts = "UT"
+  revision = "5dc65dacedd4db4d562b0a1bbcc62b20626ca22b"
+  version = "v0.4.0"
 
 [[projects]]
   digest = "1:bb495ec276ab82d3dd08504bbc0594a65de8c3b22c6f2aaa92d05b73fbf3a82e"
@@ -994,7 +1011,6 @@
   analyzer-version = 1
   input-imports = [
     "github.com/giantswarm/apiextensions/pkg/apis/core/v1alpha1",
-    "github.com/giantswarm/exporterkit/collector",
     "github.com/giantswarm/k8sclient",
     "github.com/giantswarm/k8sclient/k8srestconfig",
     "github.com/giantswarm/microendpoint/endpoint/healthz",
@@ -1011,10 +1027,12 @@
     "github.com/giantswarm/operatorkit/resource/wrapper/metricsresource",
     "github.com/giantswarm/operatorkit/resource/wrapper/retryresource",
     "github.com/giantswarm/versionbundle",
+    "github.com/rancher/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1",
+    "github.com/rancher/terraform-controller/pkg/generated/clientset/versioned",
     "github.com/spf13/viper",
-    "k8s.io/api/core/v1",
+    "k8s.io/apimachinery/pkg/api/errors",
+    "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/apimachinery/pkg/runtime",
-    "k8s.io/client-go/kubernetes",
     "k8s.io/client-go/rest",
   ]
   solver-name = "gps-cdcl"

@@ -6,18 +6,20 @@ import (
 	"context"
 	"sync"
 
+	"github.com/giantswarm/apiextensions/pkg/apis/core/v1alpha1"
 	"github.com/giantswarm/k8sclient"
 	"github.com/giantswarm/k8sclient/k8srestconfig"
 	"github.com/giantswarm/microendpoint/service/version"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
 	"github.com/giantswarm/versionbundle"
+	"github.com/rancher/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1"
+	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/rest"
 
 	"github.com/giantswarm/installation-operator/flag"
 	"github.com/giantswarm/installation-operator/pkg/project"
-	"github.com/giantswarm/installation-operator/service/collector"
 	"github.com/giantswarm/installation-operator/service/controller"
 )
 
@@ -32,9 +34,8 @@ type Config struct {
 type Service struct {
 	Version *version.Service
 
-	bootOnce          sync.Once
-	todoController    *controller.TODO
-	operatorCollector *collector.Set
+	bootOnce               sync.Once
+	installationController *controller.Installation
 }
 
 // New creates a new configured service object.
@@ -79,7 +80,10 @@ func New(config Config) (*Service, error) {
 	{
 		c := k8sclient.ClientsConfig{
 			Logger: config.Logger,
-
+			SchemeBuilder: k8sclient.SchemeBuilder{
+				v1alpha1.AddToScheme,
+				v1.AddToScheme,
+			},
 			RestConfig: restConfig,
 		}
 
@@ -89,28 +93,24 @@ func New(config Config) (*Service, error) {
 		}
 	}
 
-	var todoController *controller.TODO
+	var tfClient versioned.Interface
 	{
-
-		c := controller.TODOConfig{
-			K8sClient: k8sClient,
-			Logger:    config.Logger,
-		}
-
-		todoController, err = controller.NewTODO(c)
+		tfClient, err = versioned.NewForConfig(restConfig)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
 	}
 
-	var operatorCollector *collector.Set
+	var installationController *controller.Installation
 	{
-		c := collector.SetConfig{
-			K8sClient: k8sClient.K8sClient(),
+
+		c := controller.InstallationConfig{
+			K8sClient: k8sClient,
 			Logger:    config.Logger,
+			TFClient:  tfClient,
 		}
 
-		operatorCollector, err = collector.NewSet(c)
+		installationController, err = controller.NewInstallation(c)
 		if err != nil {
 			return nil, microerror.Mask(err)
 		}
@@ -136,9 +136,8 @@ func New(config Config) (*Service, error) {
 	s := &Service{
 		Version: versionService,
 
-		bootOnce:          sync.Once{},
-		todoController:    todoController,
-		operatorCollector: operatorCollector,
+		bootOnce:               sync.Once{},
+		installationController: installationController,
 	}
 
 	return s, nil
@@ -146,8 +145,6 @@ func New(config Config) (*Service, error) {
 
 func (s *Service) Boot(ctx context.Context) {
 	s.bootOnce.Do(func() {
-		go s.operatorCollector.Boot(ctx)
-
-		go s.todoController.Boot(ctx)
+		go s.installationController.Boot(ctx)
 	})
 }

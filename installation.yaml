@@ -1,0 +1,7 @@
+apiVersion: core.giantswarm.io/v1alpha1
+kind: Installation
+metadata:
+  name: george
+  namespace: default
+  labels:
+    installation-operator.giantswarm.io/version: "0.0.1"

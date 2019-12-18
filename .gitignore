@@ -2,3 +2,4 @@
 TODO
 /installation-operator
 !vendor/**
+.DS_Store
