@@ -8,7 +8,6 @@ import (
 	"github.com/giantswarm/installation-operator/service/controller/key"
 )
 
-
 func (r *Resource) EnsureCreated(ctx context.Context, obj interface{}) error {
 	cr, err := key.ToInstallation(obj)
 	if err != nil {

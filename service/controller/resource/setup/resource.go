@@ -11,14 +11,13 @@ const (
 )
 
 type Config struct {
-	GithubToken string
-	K8sClient   k8sclient.Interface
-	Logger      micrologger.Logger
+	K8sClient k8sclient.Interface
+	Logger    micrologger.Logger
 }
 
 type Resource struct {
-	logger      micrologger.Logger
-	k8sClient   k8sclient.Interface
+	logger    micrologger.Logger
+	k8sClient k8sclient.Interface
 }
 
 func New(config Config) (*Resource, error) {
@@ -30,8 +29,8 @@ func New(config Config) (*Resource, error) {
 	}
 
 	r := &Resource{
-		logger:      config.Logger,
-		k8sClient:   config.K8sClient,
+		logger:    config.Logger,
+		k8sClient: config.K8sClient,
 	}
 
 	return r, nil

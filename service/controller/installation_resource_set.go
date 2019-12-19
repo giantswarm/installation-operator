@@ -31,8 +31,8 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	var setupResource resource.Interface
 	{
 		c := setup.Config{
-			K8sClient:   config.K8sClient,
-			Logger:      config.Logger,
+			K8sClient: config.K8sClient,
+			Logger:    config.Logger,
 		}
 
 		setupResource, err = setup.New(c)
