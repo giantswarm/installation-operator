@@ -39,6 +39,7 @@ type InstallationsGetter interface {
 type InstallationInterface interface {
 	Create(*v1alpha1.Installation) (*v1alpha1.Installation, error)
 	Update(*v1alpha1.Installation) (*v1alpha1.Installation, error)
+	UpdateStatus(*v1alpha1.Installation) (*v1alpha1.Installation, error)
 	Delete(name string, options *v1.DeleteOptions) error
 	DeleteCollection(options *v1.DeleteOptions, listOptions v1.ListOptions) error
 	Get(name string, options v1.GetOptions) (*v1alpha1.Installation, error)
@@ -126,6 +127,22 @@ func (c *installations) Update(installation *v1alpha1.Installation) (result *v1a
 		Namespace(c.ns).
 		Resource("installations").
 		Name(installation.Name).
+		Body(installation).
+		Do().
+		Into(result)
+	return
+}
+
+// UpdateStatus was generated because the type contains a Status member.
+// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
+
+func (c *installations) UpdateStatus(installation *v1alpha1.Installation) (result *v1alpha1.Installation, err error) {
+	result = &v1alpha1.Installation{}
+	err = c.client.Put().
+		Namespace(c.ns).
+		Resource("installations").
+		Name(installation.Name).
+		SubResource("status").
 		Body(installation).
 		Do().
 		Into(result)

@@ -12,9 +12,9 @@ import (
 	"github.com/giantswarm/microendpoint/service/version"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
+	"github.com/giantswarm/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1"
+	"github.com/giantswarm/terraform-controller/pkg/generated/clientset/versioned"
 	"github.com/giantswarm/versionbundle"
-	"github.com/rancher/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1"
-	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/rest"
 

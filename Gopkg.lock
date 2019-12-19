@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  digest = "1:aef9339f69dda1ca77fdb2fd83cf64c3f5087c1f00f69719eaa14679f5321512"
+  name = "github.com/apparentlymart/go-cidr"
+  packages = ["cidr"]
+  pruneopts = "UT"
+  revision = "c0fb5fbe0acb592411e2db59add389a43260ad44"
+  version = "v1.0.1"
+
+[[projects]]
   digest = "1:d6afaeed1502aa28e80a4ed0981d570ad91b2579193404256ce672ed0a609e0d"
   name = "github.com/beorn7/perks"
   packages = ["quantile"]
@@ -59,7 +67,7 @@
 
 [[projects]]
   branch = "add-installation-type"
-  digest = "1:050855b0345d46c124cde57b934c5cdab4f6dec188b957e321c87c207beb54f6"
+  digest = "1:8a32b19c421306b0767dd249ce26480a8b10783a1ee83851f6d12b16345d5f4d"
   name = "github.com/giantswarm/apiextensions"
   packages = [
     "pkg/apis/application/v1alpha1",
@@ -78,7 +86,7 @@
     "pkg/clientset/versioned/typed/release/v1alpha1",
   ]
   pruneopts = "UT"
-  revision = "35462f95ea7f6343f84610d2f43cbef167f7346f"
+  revision = "b4abaa972edc70b774e9545592d1de2147466f12"
 
 [[projects]]
   branch = "master"
@@ -176,6 +184,20 @@
   ]
   pruneopts = "UT"
   revision = "master"
+
+[[projects]]
+  branch = "master"
+  digest = "1:89c4d2cc51e3784a25cbbc0c958ffbd966b45d5ef247e4885384b52df4087d29"
+  name = "github.com/giantswarm/terraform-controller"
+  packages = [
+    "pkg/apis/terraformcontroller.cattle.io",
+    "pkg/apis/terraformcontroller.cattle.io/v1",
+    "pkg/generated/clientset/versioned",
+    "pkg/generated/clientset/versioned/scheme",
+    "pkg/generated/clientset/versioned/typed/terraformcontroller.cattle.io/v1",
+  ]
+  pruneopts = "UT"
+  revision = "77703f7f6deca4dc41eb7b345c11b8eb816e165f"
 
 [[projects]]
   branch = "master"
@@ -489,20 +511,6 @@
   pruneopts = "UT"
   revision = "6d489fc7f1d9cd890a250f3ea3431b1744b9623f"
   version = "v0.0.8"
-
-[[projects]]
-  branch = "master"
-  digest = "1:3d45825d5405b0c7401a0a9ef9fe405211ba32004e1c798f6c739d34fed723f9"
-  name = "github.com/rancher/terraform-controller"
-  packages = [
-    "pkg/apis/terraformcontroller.cattle.io",
-    "pkg/apis/terraformcontroller.cattle.io/v1",
-    "pkg/generated/clientset/versioned",
-    "pkg/generated/clientset/versioned/scheme",
-    "pkg/generated/clientset/versioned/typed/terraformcontroller.cattle.io/v1",
-  ]
-  pruneopts = "UT"
-  revision = "d28d2f2bb8caa67877e6efe1bd2d22094e810a17"
 
 [[projects]]
   digest = "1:82b24f8564e54a7fdc32597a2fc2a22ffc6ae4217b00c57d27217c4c835cba10"
@@ -1010,6 +1018,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/apparentlymart/go-cidr/cidr",
     "github.com/giantswarm/apiextensions/pkg/apis/core/v1alpha1",
     "github.com/giantswarm/k8sclient",
     "github.com/giantswarm/k8sclient/k8srestconfig",
@@ -1026,10 +1035,11 @@
     "github.com/giantswarm/operatorkit/resource",
     "github.com/giantswarm/operatorkit/resource/wrapper/metricsresource",
     "github.com/giantswarm/operatorkit/resource/wrapper/retryresource",
+    "github.com/giantswarm/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1",
+    "github.com/giantswarm/terraform-controller/pkg/generated/clientset/versioned",
     "github.com/giantswarm/versionbundle",
-    "github.com/rancher/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1",
-    "github.com/rancher/terraform-controller/pkg/generated/clientset/versioned",
     "github.com/spf13/viper",
+    "k8s.io/api/core/v1",
     "k8s.io/apimachinery/pkg/api/errors",
     "k8s.io/apimachinery/pkg/apis/meta/v1",
     "k8s.io/apimachinery/pkg/runtime",

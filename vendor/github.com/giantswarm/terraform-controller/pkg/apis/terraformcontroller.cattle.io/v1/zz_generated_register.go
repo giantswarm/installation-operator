@@ -21,7 +21,7 @@ limitations under the License.
 package v1
 
 import (
-	terraformcontroller "github.com/rancher/terraform-controller/pkg/apis/terraformcontroller.cattle.io"
+	terraformcontroller "github.com/giantswarm/terraform-controller/pkg/apis/terraformcontroller.cattle.io"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"

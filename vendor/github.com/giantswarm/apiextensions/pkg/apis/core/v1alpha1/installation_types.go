@@ -39,18 +39,21 @@ func NewInstallationCRD() *apiextensionsv1beta1.CustomResourceDefinition {
 				Plural:   "installations",
 				Singular: "installation",
 			},
+			Subresources: &apiextensionsv1beta1.CustomResourceSubresources{
+				Status: &apiextensionsv1beta1.CustomResourceSubresourceStatus{},
+			},
 		},
 	}
 }
 
 // +genclient
-// +genclient:noStatus
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object
 
 type Installation struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata"`
-	Spec              InstallationSpec `json:"spec"`
+	Spec              InstallationSpec   `json:"spec"`
+	Status            InstallationStatus `json:"status"`
 }
 
 // InstallationAWSAccountConfig is the structure used to represent AWS credentials for an
@@ -96,29 +99,38 @@ type InstallationJumphostConfig struct {
 // InstallationInfo is a structure holding general information about the
 // installation.
 type InstallationInfo struct {
-	AWS                  InstallationAWSConfig                `json:"aws"`
-	Active               bool                                 `json:"active"`
-	Base                 string                               `json:"base"`
-	Codename             string                               `json:"codename"`
-	Created              DeepCopyTime                         `json:"created"`
-	Customer             string                               `json:"customer"`
-	Jumphost             InstallationJumphostConfig           `json:"jumphosts"`
-	Machines             []string                             `json:"machines"`
-	Pipeline             string                               `json:"pipeline"`
-	Provider             string                               `json:"provider"`
-	SupportSlackChannels []string                             `json:"supportSlackChannels"`
-	SSHTunnelNeeded      bool                                 `json:"sshTunnelNeeded"`
-	SSHJumphostUser      string                               `json:"sshJumphostUser"`
-	Services             map[string]InstallationServiceConfig `json:"services"`
-	SolutionEngineer     string                               `json:"solutionEngineer"`
-	Storage              InstallationStorageConfig            `json:"storage"`
-	Updated              DeepCopyTime                         `json:"updated"`
+	AWS                   InstallationAWSConfig                `json:"aws"`
+	Active                bool                                 `json:"active"`
+	Base                  string                               `json:"base"`
+	Codename              string                               `json:"codename"`
+	ContainerLinuxVersion string                               `json:"containerLinuxVersion"`
+	Created               DeepCopyTime                         `json:"created"`
+	Customer              string                               `json:"customer"`
+	Jumphost              InstallationJumphostConfig           `json:"jumphosts"`
+	Machines              []string                             `json:"machines"`
+	Pipeline              string                               `json:"pipeline"`
+	Provider              string                               `json:"provider"`
+	SupportSlackChannels  []string                             `json:"supportSlackChannels"`
+	SSHTunnelNeeded       bool                                 `json:"sshTunnelNeeded"`
+	SSHJumphostUser       string                               `json:"sshJumphostUser"`
+	Services              map[string]InstallationServiceConfig `json:"services"`
+	SolutionEngineer      string                               `json:"solutionEngineer"`
+	Storage               InstallationStorageConfig            `json:"storage"`
+	Updated               DeepCopyTime                         `json:"updated"`
 }
 
 type InstallationSpec struct {
-	InstallationInfo     `json:",inline"`
-	DraughtsmanSecret    string `json:"draughtsmanSecret"`
-	DraughtsmanConfigMap string `json:"draughtsmanConfigMap"`
+	InstallationInfo     `json:",inline"` // separate struct so it can be used in opsctl
+	DraughtsmanSecret    string           `json:"draughtsmanSecret"`
+	DraughtsmanConfigMap string           `json:"draughtsmanConfigMap"`
+}
+
+type InstallationStatus struct {
+	NodeVaultToken string   `json:"nodeVaultToken"`
+	RootDNSZone    string   `json:"rootDNSZone"`
+	VPNGateway0    string   `json:"vpnGateway0"`
+	VPNGateway1    string   `json:"vpnGateway1"`
+	BastionSubnets []string `json:"bastionSubnets"`
 }
 
 // +k8s:deepcopy-gen:interfaces=k8s.io/apimachinery/pkg/runtime.Object

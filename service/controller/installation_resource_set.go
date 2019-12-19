@@ -8,13 +8,14 @@ import (
 	"github.com/giantswarm/operatorkit/resource"
 	"github.com/giantswarm/operatorkit/resource/wrapper/metricsresource"
 	"github.com/giantswarm/operatorkit/resource/wrapper/retryresource"
-	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
+	"github.com/giantswarm/terraform-controller/pkg/generated/clientset/versioned"
 
 	"github.com/giantswarm/installation-operator/pkg/project"
 	"github.com/giantswarm/installation-operator/service/controller/key"
 	"github.com/giantswarm/installation-operator/service/controller/resource/env"
 	"github.com/giantswarm/installation-operator/service/controller/resource/module"
 	"github.com/giantswarm/installation-operator/service/controller/resource/secret"
+	"github.com/giantswarm/installation-operator/service/controller/resource/setup"
 	"github.com/giantswarm/installation-operator/service/controller/resource/state"
 )
 
@@ -26,6 +27,19 @@ type installationResourceSetConfig struct {
 
 func newInstallationResourceSet(config installationResourceSetConfig) (*controller.ResourceSet, error) {
 	var err error
+
+	var setupResource resource.Interface
+	{
+		c := setup.Config{
+			K8sClient:   config.K8sClient,
+			Logger:      config.Logger,
+		}
+
+		setupResource, err = setup.New(c)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
 
 	var envResource resource.Interface
 	{
@@ -80,6 +94,7 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	}
 
 	resources := []resource.Interface{
+		setupResource,
 		envResource,
 		secretResource,
 		moduleResource,

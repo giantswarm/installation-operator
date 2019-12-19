@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
+	"github.com/giantswarm/terraform-controller/pkg/generated/clientset/versioned"
 	"k8s.io/apimachinery/pkg/runtime"
 
 	"github.com/giantswarm/apiextensions/pkg/apis/core/v1alpha1"

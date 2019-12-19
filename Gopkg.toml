@@ -65,7 +65,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "github.com/rancher/terraform-controller"
+  name = "github.com/giantswarm/terraform-controller"
 
 
 [prune]
