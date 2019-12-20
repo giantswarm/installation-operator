@@ -10,7 +10,7 @@ import (
 	"github.com/giantswarm/operatorkit/resource/wrapper/retryresource"
 	"github.com/giantswarm/terraform-controller/pkg/generated/clientset/versioned"
 	"github.com/hashicorp/vault/api"
-	
+
 	"github.com/giantswarm/installation-operator/pkg/project"
 	"github.com/giantswarm/installation-operator/service/controller/key"
 	"github.com/giantswarm/installation-operator/service/controller/resource/bastionsubnets"
@@ -128,8 +128,8 @@ func newInstallationResourceSet(config installationResourceSetConfig) (*controll
 	var bootstrapResource resource.Interface
 	{
 		c := bootstrap.Config{
-			K8sClient:   config.K8sClient,
-			Logger:      config.Logger,
+			K8sClient: config.K8sClient,
+			Logger:    config.Logger,
 		}
 
 		bootstrapResource, err = bootstrap.New(c)

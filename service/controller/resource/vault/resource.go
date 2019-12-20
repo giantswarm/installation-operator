@@ -12,14 +12,14 @@ const (
 )
 
 type Config struct {
-	K8sClient k8sclient.Interface
-	Logger    micrologger.Logger
+	K8sClient   k8sclient.Interface
+	Logger      micrologger.Logger
 	VaultClient *api.Client
 }
 
 type Resource struct {
-	k8sClient k8sclient.Interface
-	logger    micrologger.Logger
+	k8sClient   k8sclient.Interface
+	logger      micrologger.Logger
 	vaultClient *api.Client
 }
 
@@ -35,8 +35,8 @@ func New(config Config) (*Resource, error) {
 	}
 
 	r := &Resource{
-		logger:    config.Logger,
-		k8sClient: config.K8sClient,
+		logger:      config.Logger,
+		k8sClient:   config.K8sClient,
 		vaultClient: config.VaultClient,
 	}
 
