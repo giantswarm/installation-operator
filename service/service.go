@@ -12,9 +12,10 @@ import (
 	"github.com/giantswarm/microendpoint/service/version"
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
+	"github.com/giantswarm/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1"
+	"github.com/giantswarm/terraform-controller/pkg/generated/clientset/versioned"
 	"github.com/giantswarm/versionbundle"
-	"github.com/rancher/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1"
-	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
+	"github.com/hashicorp/vault/api"
 	"github.com/spf13/viper"
 	"k8s.io/client-go/rest"
 
@@ -101,13 +102,34 @@ func New(config Config) (*Service, error) {
 		}
 	}
 
+	var vaultClient *api.Client
+	{
+		config := api.Config{
+			Address:          "",
+			AgentAddress:     "",
+			HttpClient:       nil,
+			MaxRetries:       0,
+			Timeout:          0,
+			Error:            nil,
+			Backoff:          nil,
+			CheckRetry:       nil,
+			Limiter:          nil,
+			OutputCurlString: false,
+		}
+		vaultClient, err = api.NewClient(&config)
+		if err != nil {
+			return nil, microerror.Mask(err)
+		}
+	}
+
 	var installationController *controller.Installation
 	{
 
 		c := controller.InstallationConfig{
-			K8sClient: k8sClient,
-			Logger:    config.Logger,
-			TFClient:  tfClient,
+			K8sClient:   k8sClient,
+			Logger:      config.Logger,
+			TFClient:    tfClient,
+			VaultClient: vaultClient,
 		}
 
 		installationController, err = controller.NewInstallation(c)

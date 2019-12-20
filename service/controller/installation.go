@@ -1,7 +1,8 @@
 package controller
 
 import (
-	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
+	"github.com/giantswarm/terraform-controller/pkg/generated/clientset/versioned"
+	"github.com/hashicorp/vault/api"
 	"k8s.io/apimachinery/pkg/runtime"
 
 	"github.com/giantswarm/apiextensions/pkg/apis/core/v1alpha1"
@@ -14,9 +15,10 @@ import (
 )
 
 type InstallationConfig struct {
-	K8sClient k8sclient.Interface
-	Logger    micrologger.Logger
-	TFClient  versioned.Interface
+	K8sClient   k8sclient.Interface
+	Logger      micrologger.Logger
+	TFClient    versioned.Interface
+	VaultClient *api.Client
 }
 
 type Installation struct {
@@ -63,9 +65,10 @@ func newInstallationResourceSets(config InstallationConfig) ([]*controller.Resou
 	var installationResourceSet *controller.ResourceSet
 	{
 		c := installationResourceSetConfig{
-			K8sClient: config.K8sClient,
-			Logger:    config.Logger,
-			TFClient:  config.TFClient,
+			K8sClient:   config.K8sClient,
+			Logger:      config.Logger,
+			TFClient:    config.TFClient,
+			VaultClient: config.VaultClient,
 		}
 
 		installationResourceSet, err = newInstallationResourceSet(c)

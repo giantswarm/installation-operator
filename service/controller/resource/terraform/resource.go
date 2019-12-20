@@ -3,7 +3,7 @@ package terraform
 import (
 	"github.com/giantswarm/microerror"
 	"github.com/giantswarm/micrologger"
-	"github.com/rancher/terraform-controller/pkg/generated/clientset/versioned"
+	"github.com/giantswarm/terraform-controller/pkg/generated/clientset/versioned"
 )
 
 const (

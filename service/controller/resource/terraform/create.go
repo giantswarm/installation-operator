@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"github.com/giantswarm/microerror"
-	tfv1 "github.com/rancher/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1"
+	tfv1 "github.com/giantswarm/terraform-controller/pkg/apis/terraformcontroller.cattle.io/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -12,25 +12,38 @@ import (
 )
 
 func (r *Resource) EnsureCreated(ctx context.Context, obj interface{}) error {
+	r.logger.LogCtx(ctx, "message", "ensure state created")
 	cr, err := key.ToInstallation(obj)
 	if err != nil {
 		return microerror.Mask(err)
 	}
-	_, err = r.tfClient.TerraformcontrollerV1().Modules(cr.Namespace).Get(cr.Name, metav1.GetOptions{})
+	if cr.Spec.Provider != "aws" {
+		r.logger.LogCtx(ctx, "message", "provider not supported", "provider", cr.Spec.Provider)
+		return nil
+	}
+	_, err = r.tfClient.TerraformcontrollerV1().States(cr.Namespace).Get(cr.Name, metav1.GetOptions{})
 	if errors.IsNotFound(err) {
-		module := tfv1.Module{
+		state := tfv1.State{
 			ObjectMeta: metav1.ObjectMeta{
 				Name:      cr.Name,
 				Namespace: cr.Namespace,
 			},
-			Spec: tfv1.ModuleSpec{
-				ModuleContent: tfv1.ModuleContent{
-					Content: nil,
-					Git:     tfv1.GitLocation{},
+			Spec: tfv1.StateSpec{
+				Image: "rancher/terraform-controller-executor:v0.0.10-alpha1",
+				Variables: tfv1.Variables{
+					EnvConfigName: []string{
+						"env-config",
+					},
+					SecretNames: []string{
+						cr.Name,
+					},
 				},
+				ModuleName:      cr.Name,
+				AutoConfirm:     true,
+				DestroyOnDelete: true,
 			},
 		}
-		_, err = r.tfClient.TerraformcontrollerV1().Modules(cr.Namespace).Create(&module)
+		_, err = r.tfClient.TerraformcontrollerV1().States(cr.Namespace).Create(&state)
 		if err != nil {
 			return microerror.Mask(err)
 		}
@@ -38,6 +51,5 @@ func (r *Resource) EnsureCreated(ctx context.Context, obj interface{}) error {
 		return microerror.Mask(err)
 	}
 
-	r.logger.LogCtx(ctx, "ensured created")
 	return nil
 }
