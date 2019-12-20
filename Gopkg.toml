@@ -19,6 +19,14 @@
 #  name = "github.com/x/y"
 #  version = "2.4.0"
 
+[[constraint]]
+  branch = "master"
+  name = "github.com/hashicorp/vault"
+
+[[constraint]]
+  branch = "master"
+  name = "github.com/apenella/go-ansible"
+
 [[override]]
   branch = "add-installation-type"
   name = "github.com/giantswarm/apiextensions"
